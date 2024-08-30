@@ -16,11 +16,11 @@ async def on_ready():
 
 
 @bot.slash_command(description='Run command in terminal', guild_ids=[TESTING_GUILD_ID])
-async def terminal(interaction: nextcord.Interaction):
+async def terminal(interaction: nextcord.Interaction, command: str):
     if interaction.user.id in PERMITTED_IDS:
-        await interaction.send('Permitted!')
+        await interaction.send(f'Permitted! Running: >{command}')
     else:
-        await interaction.send('Not Permitted.')
+        await interaction.send(f'Not Permitted.')
 
 
 bot.run(API_KEY)
