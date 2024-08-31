@@ -25,5 +25,7 @@ class Server(commands.Cog):
             await interaction.send(f'Not Permitted.')
 
 
+
+
 def setup(bot: Bot) -> None:
     bot.add_cog(Server(bot))

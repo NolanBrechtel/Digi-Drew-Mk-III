@@ -16,7 +16,7 @@ def loadCogs(bot: Bot):
             cogsList.append(file[:-3])
             print(f'Loading: {file[:-3]}')
             bot.load_extension(f'cogs.{file[:-3]}')
-            print(f'Loaded {file[:-3]}!')
+            print(f'Done!')
 
 @bot.slash_command(description='Loads an unloaded cog', guild_ids=[TESTING_GUILD_ID])
 async def loadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name= "cog", required=True, choices=cogsList)) -> None:
@@ -38,7 +38,8 @@ async def loadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name
         except commands.ExtensionNotFound:
             await interaction.send(f'{cog.title()} is not a option.')
         else:
-            await interaction.send(f'Loaded Cog: {cog}')
+            await interaction.send(f'Loaded Cog: {cog.title()}')
+            await bot.sync_application_commands(guild_id=TESTING_GUILD_ID)
     else:
         await interaction.send(f'Not Permitted')
 
@@ -61,7 +62,8 @@ async def unloadcog(interaction: nextcord.Interaction, cog: str = SlashOption(na
         except commands.ExtensionNotFound:
             await interaction.send(f'{cog.title()} is not a option.')
         else:
-            await interaction.send(f'Unloaded Cog: {cog}')
+            await interaction.send(f'Unloaded Cog: {cog.title()}')
+            await bot.sync_application_commands(guild_id=TESTING_GUILD_ID)
     else:
         await interaction.send(f'Not Permitted')
 
@@ -69,6 +71,7 @@ async def unloadcog(interaction: nextcord.Interaction, cog: str = SlashOption(na
 async def refreshslash(interaction: nextcord.Interaction) -> None:
     """
     Refreshes Slash commands. Needs to be used when loading a cog.
+
     :param interaction: Interaction
         The interaction object
     :return: None
@@ -77,12 +80,11 @@ async def refreshslash(interaction: nextcord.Interaction) -> None:
         await bot.sync_application_commands(guild_id=TESTING_GUILD_ID)
         await interaction.send('Slash commands refreshed!')
     except Forbidden:
-        await interaction.send('An error has occured')
+        await interaction.send('An error has occurred.')
 
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-
-bot.run(API_KEY)
 loadCogs(bot)
+bot.run(API_KEY)
