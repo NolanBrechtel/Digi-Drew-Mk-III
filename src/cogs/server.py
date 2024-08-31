@@ -1,4 +1,5 @@
 import nextcord
+from nextcord import SlashOption
 from nextcord.ext import commands
 from nextcord.ext.commands import Bot
 
@@ -8,8 +9,9 @@ import subprocess
 
 
 class Server(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
+        self.isServerOn = True
 
     @nextcord.slash_command(description='Run command in terminal', guild_ids=[TESTING_GUILD_ID])
     async def terminal(self, interaction: nextcord.Interaction, command: str) -> None:
@@ -24,7 +26,15 @@ class Server(commands.Cog):
         else:
             await interaction.send(f'Not Permitted.')
 
+    @nextcord.slash_command(description='Start or stop the minecraft server.', guild_ids=[TESTING_GUILD_ID], default_member_permissions=8)
+    async def minecraft(self, interaction: nextcord.Interaction) -> None:
+        if self.isServerOn:
+            await self.bot.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.listening, name='for the server.'))
 
+        else:
+            await self.bot.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name='over the server.'))
+            subprocess.run('D:\RAD2-Serverpack-1.12\RAD2-Serverpack-1.12\LaunchServer.bat')
+            await interaction.send('Starting the server.')
 
 
 def setup(bot: Bot) -> None:
