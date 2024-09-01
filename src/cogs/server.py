@@ -3,7 +3,7 @@ from nextcord import SlashOption
 from nextcord.ext import commands
 from nextcord.ext.commands import Bot
 
-from src.values import TESTING_GUILD_ID, PERMITTED_IDS
+from src.values import TESTING_GUILD_ID, PERMITTED_IDS, MC_RCON_PORT, MC_RCON_PASS, PATH_TO_MCSERVER
 
 import subprocess
 
@@ -33,8 +33,12 @@ class Server(commands.Cog):
 
         else:
             await self.bot.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name='over the server.'))
-            subprocess.run('D:\RAD2-Serverpack-1.12\RAD2-Serverpack-1.12\LaunchServer.bat')
+            subprocess.run(PATH_TO_MCSERVER, shell=True, capture_output=True, text=True)
             await interaction.send('Starting the server.')
+
+    @nextcord.slash_command(description='Remotely runs a command on the minecraft server.', guild_ids=[TESTING_GUILD_ID], default_member_permissions=8)
+    async def command(self, interaction: nextcord.Interaction, command: str) -> None:
+        subprocess.run(['./rcon', '-a', MC_RCON_PORT, '-p', MC_RCON_PASS, f'"{command}"'], shell=True, capture_output=True, text=True)
 
 
 def setup(bot: Bot) -> None:
