@@ -6,6 +6,8 @@ from nextcord.ext.commands import Bot
 from src.values import TESTING_GUILD_ID, PERMITTED_IDS, MC_RCON_PORT, MC_RCON_PASS, PATH_TO_MCSERVER
 
 import subprocess
+import psutil
+from math import floor
 
 
 class Server(commands.Cog):
@@ -26,10 +28,18 @@ class Server(commands.Cog):
         else:
             await interaction.send(f'Not Permitted.')
 
-    @nextcord.slash_command(description='Start or stop the minecraft server.', guild_ids=[TESTING_GUILD_ID], default_member_permissions=8)
+    @nextcord.slash_command(description='Get the current resource usage of the server.', guild_ids=[TESTING_GUILD_ID])
+    async def resources(self, interaction: nextcord.Interaction):
+        mem = psutil.virtual_memory()
+        await interaction.send(f'**System Resource Usage:**\n\n```Memory: {floor(mem.used / 1024**2):>7} MB / {floor(mem.total / 1024**2):<7}MB  |  {mem.percent}%\n'
+                               f'Disk:   {floor(psutil.disk_usage("/").used / 1024**2):>7} MB / {floor(psutil.disk_usage("/").total / 1024**2):<7}MB  |  {psutil.disk_usage("/").percent}%\n'
+                               f'CPU:    {psutil.cpu_percent()}% ```')
+
+
+    @nextcord.slash_command(description='Start or stop the Minecraft server.', guild_ids=[TESTING_GUILD_ID], default_member_permissions=8)
     async def minecraft(self, interaction: nextcord.Interaction) -> None:
         if self.isServerOn:
-            await self.bot.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.listening, name='for the server.'))
+            await self.bot.change_presence(activity=nextcord.Activity(type=nex  tcord.ActivityType.listening, name='for the server.'))
 
         else:
             await self.bot.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name='over the server.'))
