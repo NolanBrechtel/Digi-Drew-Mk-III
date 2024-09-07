@@ -1,5 +1,3 @@
-import os
-
 import nextcord
 from nextcord import SlashOption, Forbidden
 from nextcord.ext import commands
@@ -7,8 +5,11 @@ from nextcord.ext.commands import Bot
 
 from values import API_KEY, TESTING_GUILD_ID, PERMITTED_IDS
 
+import os
+
 bot = commands.Bot()
 cogsList = []
+
 
 def loadCogs(bot: Bot):
     for file in os.listdir("./cogs"):
@@ -18,8 +19,10 @@ def loadCogs(bot: Bot):
             bot.load_extension(f'cogs.{file[:-3]}')
             print(f'Done!')
 
+
 @bot.slash_command(description='Loads an unloaded cog', guild_ids=[TESTING_GUILD_ID])
-async def loadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name= "cog", required=True, choices=cogsList)) -> None:
+async def loadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name="cog", required=True,
+                                                                            choices=cogsList)) -> None:
     """
     Loads the specified cog. All cogs are loaded upon starting the bot, so this command should only need to be used if
     the unloadcog command was used to unload a cog.
@@ -43,8 +46,10 @@ async def loadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name
     else:
         await interaction.send(f'Not Permitted')
 
+
 @bot.slash_command(description='Unloads a loaded cog', guild_ids=[TESTING_GUILD_ID])
-async def unloadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name="cog", required=True, choices=cogsList)) -> None:
+async def unloadcog(interaction: nextcord.Interaction, cog: str = SlashOption(name="cog", required=True,
+                                                                              choices=cogsList)) -> None:
     """
     Unloads an already loaded Cog
 
@@ -67,6 +72,7 @@ async def unloadcog(interaction: nextcord.Interaction, cog: str = SlashOption(na
     else:
         await interaction.send(f'Not Permitted')
 
+
 @bot.slash_command(description='Refreshes Slash commands.', guild_ids=[TESTING_GUILD_ID])
 async def refreshslash(interaction: nextcord.Interaction) -> None:
     """
@@ -82,9 +88,11 @@ async def refreshslash(interaction: nextcord.Interaction) -> None:
     except Forbidden:
         await interaction.send('An error has occurred.')
 
+
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
+
 
 loadCogs(bot)
 bot.run(API_KEY)
